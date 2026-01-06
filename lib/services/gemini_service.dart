@@ -2,19 +2,21 @@ import 'package:google_generative_ai/google_generative_ai.dart';
 
 class GeminiService {
   // ⚠️ REPLACE WITH YOUR ACTUAL API KEY
-  static const String apiKey = 'YOUR_GEMINI_API_KEY_HERE';
+  static const String apiKey = 'AIzaSyBXS2vnoQplI2bvhLIfLgc3B1alGgwRtgY';
   
   late final GenerativeModel _model;
 
   GeminiService() {
     _model = GenerativeModel(
-      model: 'gemini-pro', 
+      model: 'gemini-1.5-flash', // Flash is faster and good for simple tasks
       apiKey: apiKey,
     );
   }
 
   Future<String> getWasteInfo(String wasteType) async {
-   final prompt = '''
+    try {
+      // We give the AI a "Role" and a strict "Template" to follow.
+      final prompt = '''
       You are a helpful eco-friendly recycling assistant.
       I have a piece of waste identified as: "$wasteType".
 
@@ -39,6 +41,7 @@ class GeminiService {
 
       return response.text ?? "Could not fetch info at this time.";
     } catch (e) {
+      print("Gemini Error: $e");
       return "Unable to connect to AI service. Please check your internet connection.";
     }
   }
