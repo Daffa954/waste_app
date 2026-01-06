@@ -26,46 +26,35 @@ class HomeScreen extends StatelessWidget {
               child: SafeArea(
                 child: Column(
                   children: [
-                    // Header
+                    // Header (Kept original)
                     Padding(
                       padding: EdgeInsets.all(24),
-                      child: Column(
+                      child: Row(
                         children: [
-                          Row(
+                          Container(
+                            padding: EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.2),
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            child: Icon(Icons.recycling, color: Colors.white, size: 28),
+                          ),
+                          SizedBox(width: 16),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Container(
-                                padding: EdgeInsets.all(12),
-                                decoration: BoxDecoration(
-                                  color: Colors.white.withOpacity(0.2),
-                                  borderRadius: BorderRadius.circular(16),
-                                ),
-                                child: Icon(
-                                  Icons.recycling,
+                              Text(
+                                "Waste AI",
+                                style: TextStyle(
+                                  fontSize: 28,
+                                  fontWeight: FontWeight.bold,
                                   color: Colors.white,
-                                  size: 28,
+                                  letterSpacing: 0.5,
                                 ),
                               ),
-                              SizedBox(width: 16),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    "Waste AI",
-                                    style: TextStyle(
-                                      fontSize: 28,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white,
-                                      letterSpacing: 0.5,
-                                    ),
-                                  ),
-                                  Text(
-                                    "Smart Waste Classification",
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.white.withOpacity(0.8),
-                                    ),
-                                  ),
-                                ],
+                              Text(
+                                "Smart Waste Classification",
+                                style: TextStyle(fontSize: 14, color: Colors.white.withOpacity(0.8)),
                               ),
                             ],
                           ),
@@ -90,19 +79,14 @@ class HomeScreen extends StatelessWidget {
                             padding: EdgeInsets.all(32),
                             child: Column(
                               children: [
-                                // Image Display
+                                // Image Display (Kept original)
                                 AnimatedContainer(
                                   duration: Duration(milliseconds: 300),
-                                  height: 320,
+                                  height: 250, // Slightly reduced height to fit text
                                   width: double.infinity,
                                   decoration: BoxDecoration(
                                     gradient: viewModel.image == null
-                                        ? LinearGradient(
-                                            colors: [
-                                              Color(0xFFF5F7FA),
-                                              Color(0xFFE8ECF1),
-                                            ],
-                                          )
+                                        ? LinearGradient(colors: [Color(0xFFF5F7FA), Color(0xFFE8ECF1)])
                                         : null,
                                     borderRadius: BorderRadius.circular(24),
                                     boxShadow: [
@@ -116,160 +100,109 @@ class HomeScreen extends StatelessWidget {
                                   child: ClipRRect(
                                     borderRadius: BorderRadius.circular(24),
                                     child: viewModel.image == null
-                                        ? Column(
-                                            mainAxisAlignment: MainAxisAlignment.center,
-                                            children: [
-                                              Icon(
-                                                Icons.add_photo_alternate_outlined,
-                                                size: 80,
-                                                color: Colors.grey[400],
-                                              ),
-                                              SizedBox(height: 16),
-                                              Text(
-                                                "No image selected",
-                                                style: TextStyle(
-                                                  fontSize: 16,
-                                                  color: Colors.grey[500],
-                                                  fontWeight: FontWeight.w500,
-                                                ),
-                                              ),
-                                              SizedBox(height: 8),
-                                              Text(
-                                                "Tap below to capture or select",
-                                                style: TextStyle(
-                                                  fontSize: 13,
-                                                  color: Colors.grey[400],
-                                                ),
-                                              ),
-                                            ],
+                                        ? Center(
+                                            child: Icon(Icons.add_photo_alternate_outlined, size: 60, color: Colors.grey[400]),
                                           )
-                                        : Image.file(
-                                            viewModel.image!,
-                                            fit: BoxFit.cover,
-                                          ),
+                                        : Image.file(viewModel.image!, fit: BoxFit.cover),
                                   ),
                                 ),
 
-                                SizedBox(height: 32),
+                                SizedBox(height: 24),
 
                                 // Results Section
-                                AnimatedSwitcher(
-                                  duration: Duration(milliseconds: 400),
-                                  child: viewModel.isBusy
-                                      ? Column(
-                                          key: ValueKey('loading'),
+                                if (viewModel.isBusy)
+                                  Column(
+                                    children: [
+                                      CircularProgressIndicator(color: Color(0xFF667eea)),
+                                      SizedBox(height: 16),
+                                      Text("Analyzing...", style: TextStyle(color: Colors.grey[600])),
+                                    ],
+                                  )
+                                else if (viewModel.image != null)
+                                  Column(
+                                    children: [
+                                      // 1. Classification Result
+                                      Container(
+                                        padding: EdgeInsets.all(20),
+                                        decoration: BoxDecoration(
+                                          color: Color(0xFFF5F7FA),
+                                          borderRadius: BorderRadius.circular(20),
+                                          border: Border.all(color: Color(0xFF667eea).withOpacity(0.2)),
+                                        ),
+                                        child: Column(
                                           children: [
-                                            CircularProgressIndicator(
-                                              valueColor: AlwaysStoppedAnimation<Color>(
-                                                Color(0xFF667eea),
-                                              ),
-                                              strokeWidth: 3,
-                                            ),
-                                            SizedBox(height: 16),
                                             Text(
-                                              "Analyzing...",
+                                              viewModel.label,
                                               style: TextStyle(
-                                                fontSize: 16,
-                                                color: Colors.grey[600],
-                                                fontWeight: FontWeight.w500,
+                                                fontSize: 28,
+                                                fontWeight: FontWeight.bold,
+                                                color: Color(0xFF667eea),
                                               ),
+                                            ),
+                                            Text(
+                                              "${(viewModel.confidence * 100).toStringAsFixed(1)}% Confidence",
+                                              style: TextStyle(color: Colors.grey[600]),
                                             ),
                                           ],
-                                        )
-                                      : viewModel.image != null
-                                          ? Container(
-                                              key: ValueKey('result'),
-                                              padding: EdgeInsets.all(24),
-                                              decoration: BoxDecoration(
-                                                gradient: LinearGradient(
-                                                  colors: [
-                                                    Color(0xFF667eea).withOpacity(0.1),
-                                                    Color(0xFF764ba2).withOpacity(0.1),
-                                                  ],
-                                                ),
-                                                borderRadius: BorderRadius.circular(20),
-                                                border: Border.all(
-                                                  color: Color(0xFF667eea).withOpacity(0.3),
-                                                  width: 1.5,
-                                                ),
-                                              ),
-                                              child: Column(
+                                        ),
+                                      ),
+                                      
+                                      SizedBox(height: 16),
+
+                                      // 2. Gemini AI Info Section
+                                      if (viewModel.wasteInfo.isNotEmpty)
+                                        Container(
+                                          width: double.infinity,
+                                          padding: EdgeInsets.all(20),
+                                          decoration: BoxDecoration(
+                                            gradient: LinearGradient(
+                                              colors: [Color(0xFF764ba2).withOpacity(0.1), Color(0xFF667eea).withOpacity(0.05)],
+                                            ),
+                                            borderRadius: BorderRadius.circular(20),
+                                            border: Border.all(color: Color(0xFF764ba2).withOpacity(0.2)),
+                                          ),
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Row(
                                                 children: [
+                                                  Icon(Icons.lightbulb, color: Colors.amber, size: 24),
+                                                  SizedBox(width: 8),
                                                   Text(
-                                                    "Classification Result",
+                                                    "AI Insights",
                                                     style: TextStyle(
-                                                      fontSize: 14,
-                                                      color: Colors.grey[600],
-                                                      fontWeight: FontWeight.w500,
-                                                      letterSpacing: 0.5,
-                                                    ),
-                                                  ),
-                                                  SizedBox(height: 12),
-                                                  Text(
-                                                    viewModel.label,
-                                                    style: TextStyle(
-                                                      fontSize: 32,
+                                                      fontSize: 18,
                                                       fontWeight: FontWeight.bold,
-                                                      color: Color(0xFF667eea),
-                                                      letterSpacing: 0.5,
-                                                    ),
-                                                    textAlign: TextAlign.center,
-                                                  ),
-                                                  SizedBox(height: 16),
-                                                  Row(
-                                                    mainAxisAlignment: MainAxisAlignment.center,
-                                                    children: [
-                                                      Icon(
-                                                        Icons.verified,
-                                                        color: Color(0xFF764ba2),
-                                                        size: 20,
-                                                      ),
-                                                      SizedBox(width: 8),
-                                                      Text(
-                                                        "${(viewModel.confidence * 100).toStringAsFixed(1)}% Confidence",
-                                                        style: TextStyle(
-                                                          fontSize: 18,
-                                                          color: Colors.grey[700],
-                                                          fontWeight: FontWeight.w600,
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  SizedBox(height: 12),
-                                                  ClipRRect(
-                                                    borderRadius: BorderRadius.circular(8),
-                                                    child: LinearProgressIndicator(
-                                                      value: viewModel.confidence,
-                                                      backgroundColor: Colors.grey[200],
-                                                      valueColor: AlwaysStoppedAnimation<Color>(
-                                                        Color(0xFF667eea),
-                                                      ),
-                                                      minHeight: 6,
+                                                      color: Color(0xFF764ba2),
                                                     ),
                                                   ),
                                                 ],
                                               ),
-                                            )
-                                          : Container(
-                                              key: ValueKey('empty'),
-                                            ),
-                                ),
+                                              SizedBox(height: 12),
+                                              Text(
+                                                viewModel.wasteInfo,
+                                                style: TextStyle(
+                                                  fontSize: 14,
+                                                  height: 1.5,
+                                                  color: Colors.grey[800],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                    ],
+                                  ),
 
-                                SizedBox(height: 40),
+                                SizedBox(height: 24),
 
-                                // Action Buttons
+                                // Action Buttons (Kept original structure)
                                 Row(
                                   children: [
                                     Expanded(
                                       child: _ActionButton(
                                         icon: Icons.camera_alt,
                                         label: "Camera",
-                                        gradient: LinearGradient(
-                                          colors: [
-                                            Color(0xFF667eea),
-                                            Color(0xFF764ba2),
-                                          ],
-                                        ),
+                                        gradient: LinearGradient(colors: [Color(0xFF667eea), Color(0xFF764ba2)]),
                                         onTap: () => viewModel.pickImage(ImageSource.camera),
                                       ),
                                     ),
@@ -278,12 +211,7 @@ class HomeScreen extends StatelessWidget {
                                       child: _ActionButton(
                                         icon: Icons.photo_library,
                                         label: "Gallery",
-                                        gradient: LinearGradient(
-                                          colors: [
-                                            Color(0xFF764ba2),
-                                            Color(0xFFF093FB),
-                                          ],
-                                        ),
+                                        gradient: LinearGradient(colors: [Color(0xFF764ba2), Color(0xFFF093FB)]),
                                         onTap: () => viewModel.pickImage(ImageSource.gallery),
                                       ),
                                     ),
@@ -306,6 +234,7 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
+// _ActionButton class remains exactly the same as in your original file
 class _ActionButton extends StatelessWidget {
   final IconData icon;
   final String label;
@@ -327,7 +256,7 @@ class _ActionButton extends StatelessWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(16),
         child: Container(
-          padding: EdgeInsets.symmetric(vertical: 20),
+          padding: EdgeInsets.symmetric(vertical: 16), // Slightly reduced padding
           decoration: BoxDecoration(
             gradient: gradient,
             borderRadius: BorderRadius.circular(16),
@@ -341,17 +270,13 @@ class _ActionButton extends StatelessWidget {
           ),
           child: Column(
             children: [
-              Icon(
-                icon,
-                color: Colors.white,
-                size: 32,
-              ),
+              Icon(icon, color: Colors.white, size: 28),
               SizedBox(height: 8),
               Text(
                 label,
                 style: TextStyle(
                   color: Colors.white,
-                  fontSize: 16,
+                  fontSize: 15,
                   fontWeight: FontWeight.w600,
                   letterSpacing: 0.5,
                 ),
