@@ -247,9 +247,34 @@ class HomeScreen extends StatelessWidget {
                                                       minHeight: 6,
                                                     ),
                                                   ),
-                                                ],
-                                              ),
-                                            )
+                                                  if (viewModel.recommendation.isNotEmpty) ...[
+                                                    SizedBox(height: 20),
+                                                    Divider(color: Color(0xFF667eea).withOpacity(0.3)),
+                                                    SizedBox(height: 12),
+                                                    Align(
+                                                      alignment: Alignment.centerLeft,
+                                                      child: Text(
+                                                        "Recommendations",
+                                                        style: TextStyle(
+                                                          fontWeight: FontWeight.bold,
+                                                          color: Color(0xFF764ba2),
+                                                          fontSize: 16,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    SizedBox(height: 8),
+                                                    Text(
+                                                      viewModel.recommendation,
+                                                      style: TextStyle(
+                                                        fontSize: 14,
+                                                        color: Colors.grey[800],
+                                                        height: 1.5, // Better readability for paragraphs
+                                                      ),
+                                                    ),
+                                                  ] 
+                                                                                                  ],
+                                                                                                ),
+                                                                                              )
                                           : Container(
                                               key: ValueKey('empty'),
                                             ),
